@@ -13,7 +13,6 @@ class ParseSelenium(object):
     def parse():
         driver.get("https://docs.google.com/forms/d/e/1FAIpQLScLhHgD5pMnwxl8JyRfXXsJekF8_pDG36XtSEwaGsFdU2egyw/viewform")
         input_form = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//input[@class="quantumWizTextinputPaperinputInput exportInput"]')))
-        # input_form = driver.find_element(By.CLASS_NAME, "quantumWizTextinputPaperinputInput exportInput")
         print(input_form)
         input_form.send_keys("Vlad")
         driver.save_screenshot("first.png")
