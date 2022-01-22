@@ -20,6 +20,7 @@ class ParseSelenium(object):
         btn = driver.find_element(By.XPATH, '//span[text()="Отправить"]')
         btn.click()
         driver.save_screenshot("second.png")
+        driver.quit()
 
 if __name__ == '__main__':
     driver = webdriver.Chrome()
