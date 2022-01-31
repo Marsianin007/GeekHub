@@ -45,8 +45,11 @@ class RequestsParse(object):
             except:
                 pass
 
-        with open(f"{category_from_user}.csv", 'a', newline='', encoding='utf-8') as f:
+        with open(f"{category_from_user}.csv", 'r+', newline='', encoding='utf-8') as f:
+            old_csv = f.read()
+            f.seek(0)
             writer = csv.writer(f, dialect='excel', delimiter=';')
             writer.writerow(dict_to_csv.keys())
+            f.write(old_csv)
 
 RequestsParse.take_values()
