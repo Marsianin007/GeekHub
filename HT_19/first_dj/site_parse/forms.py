@@ -1,4 +1,4 @@
-from .models import *
+from .models import MyModel
 from django.forms import ModelForm
 
 class MyModelForm(ModelForm):

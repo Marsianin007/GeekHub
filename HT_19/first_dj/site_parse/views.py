@@ -1,19 +1,24 @@
 from django.shortcuts import render
-from .forms import MyModelForm, SaveModel
+from .forms import MyModelForm
+from .models import SaveModel
 
 
 def do_parse(request):
     if request.method == "POST":
         form = MyModelForm(request.POST)
         print(form["category"].value())
-        to_save = SaveModel()
-        to_save.save()
+        model = SaveModel()
+        model.save()
 
-    form = MyModelForm
+
+
+    form = MyModelForm()
     context = {
         'form' : form
     }
     return render(request, 'site_parse/index.html', context)
+
+
 
 
 
