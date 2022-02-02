@@ -1,16 +1,15 @@
 from django.shortcuts import render
 from .forms import MyModelForm
-from .models import SaveModel
+from .models import AskModel
 
 
 def do_parse(request):
     if request.method == "POST":
         form = MyModelForm(request.POST)
         print(form["category"].value())
-        model = SaveModel()
-        model.save()
-
-
+        if form["category"].value() == "askstories":
+            model = AskModel()
+            model.save()
 
     form = MyModelForm()
     context = {
