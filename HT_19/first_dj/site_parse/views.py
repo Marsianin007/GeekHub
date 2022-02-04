@@ -4,125 +4,100 @@ from .forms import MyModelForm
 from .models import AskModel, ShowModel, JobModel, NewsModel
 
 
-def make_ask_and_show_dict(post_id):
-    dict_to_csv = {"by": "null", "post_id": 0, "score": "null", "time": "null", "title": "null", "type": "null",
-                   "url": "null", "text": "null", "descendants": "null", "kids": "null"}
+def make_dict(post_id):
+    dict_to_return = {"post_id": 0}
     try:
         page = requests.get(f"https://hacker-news.firebaseio.com/v0/item/{post_id}.json?print=pretty").json()
         for key in page.keys():
             tmp = {key: page[key]}
-            dict_to_csv.update(tmp)
+            dict_to_return.update(tmp)
     except:
-        print("Error: page not found")
-    return dict_to_csv
-
-
-def make_jobstories_dict(post_id):
-    dict_to_csv = {"by": "null", "descendants": "null", "post_id": 0, "kids": "null", "score": "null",
-                   "time": "null", "title": "null", "type": "null", "url": "null"}
-    try:
-        page = requests.get(f"https://hacker-news.firebaseio.com/v0/item/{post_id}.json?print=pretty").json()
-        for key in page.keys():
-            tmp = {key: page[key]}
-            dict_to_csv.update(tmp)
-    except:
-        print("jsdf")
-    return dict_to_csv
-
-
-def make_newstories_dict(post_id):
-    dict_to_csv = {"by": "null", "descendants": "null", "post_id": 0, "score": "null", "time": "null", "title": "null", "type": "null",
-                   "url": "null", "kids": "null"}
-    try:
-        page = requests.get(f"https://hacker-news.firebaseio.com/v0/item/{post_id}.json?print=pretty").json()
-        for key in page.keys():
-            tmp = {key: page[key]}
-            dict_to_csv.update(tmp)
-    except:
-        print("jsdf")
-    return dict_to_csv
+        print("Error: post not found")
+    return dict_to_return
 
 
 def do_parse(request):
     if request.method == "POST":
         form = MyModelForm(request.POST)
+        id_list = requests.get(f"https://hacker-news.firebaseio.com/v0/"
+                               f"{form['category'].value()}.json?print=pretty").json()
 
         if form["category"].value() == "askstories":
-            id_list = requests.get(f"https://hacker-news.firebaseio.com/v0/"
-                                   f"askstories.json?print=pretty").json()
-            quantity = 0
             for id_from_list in id_list:
-                quantity += 1
                 base_object = AskModel.objects.all().filter(post_id=id_from_list)
                 if len(base_object) == 0:
-                    main_dict = make_ask_and_show_dict(id_from_list)
-                    try:
-                        model = AskModel(by=main_dict["by"], post_id=id_from_list, score=main_dict["score"],
-                                         time=main_dict["time"], title=main_dict["title"], type=main_dict["type"],
-                                         text=main_dict["text"], descendants=main_dict["descendants"],
-                                         kids=main_dict["kids"])
-                        model.save()
-                    except KeyError:
-                        pass
+                    keys_list = []
+                    for key in AskModel._meta.get_fields():
+                        keys_list.append(str(key).split(".")[2])
+                    main_dict = make_dict(id_from_list)
+                    for key in keys_list:
+                        if key not in main_dict.keys():
+                            tmp = {key: "null"}
+                            main_dict.update(tmp)
+                    model = AskModel(by=main_dict["by"], post_id=id_from_list, score=main_dict["score"],
+                                     time=main_dict["time"], title=main_dict["title"], type=main_dict["type"],
+                                     text=main_dict["text"], descendants=main_dict["descendants"],
+                                     kids=main_dict["kids"])
+                    model.save()
                 else:
                     print("Вже є")
 
         if form["category"].value() == "showstories":
-            id_list = requests.get(f"https://hacker-news.firebaseio.com/v0/"
-                                   f"showstories.json?print=pretty").json()
-            quantity = 0
             for id_from_list in id_list:
-                quantity += 1
                 base_object = ShowModel.objects.all().filter(post_id=id_from_list)
                 if len(base_object) == 0:
-                    main_dict = make_ask_and_show_dict(id_from_list)
-                    try:
-                        model = ShowModel(by=main_dict["by"], post_id=id_from_list, score=main_dict["score"],
-                                          time=main_dict["time"], title=main_dict["title"], type=main_dict["type"],
-                                          url=main_dict["url"], text=main_dict["text"],
-                                          descendants=main_dict["descendants"],
-                                          kids=main_dict["kids"])
-                        model.save()
-                    except KeyError:
-                        pass
+                    keys_list = []
+                    for key in ShowModel._meta.get_fields():
+                        keys_list.append(str(key).split(".")[2])
+                    main_dict = make_dict(id_from_list)
+                    for key in keys_list:
+                        if key not in main_dict.keys():
+                            tmp = {key: "null"}
+                            main_dict.update(tmp)
+                    model = ShowModel(by=main_dict["by"], post_id=id_from_list, score=main_dict["score"],
+                                      time=main_dict["time"], title=main_dict["title"], type=main_dict["type"],
+                                      url=main_dict["url"], text=main_dict["text"],
+                                      descendants=main_dict["descendants"],
+                                      kids=main_dict["kids"])
+                    model.save()
                 else:
                     print("Вже є")
 
         if form["category"].value() == "jobstories":
-            id_list = requests.get(f"https://hacker-news.firebaseio.com/v0/"
-                                   f"jobstories.json?print=pretty").json()
-            quantity = 0
             for id_from_list in id_list:
-                quantity += 1
                 base_object = JobModel.objects.all().filter(post_id=id_from_list)
                 if len(base_object) == 0:
-                    main_dict = make_jobstories_dict(id_from_list)
-                    try:
-                        model = JobModel(by=main_dict["by"], post_id=id_from_list, score=main_dict["score"],
-                                         time=main_dict["time"], title=main_dict["title"], type=main_dict["type"],
-                                         url=main_dict["url"])
-                        model.save()
-                    except KeyError:
-                        pass
+                    keys_list = []
+                    for key in JobModel._meta.get_fields():
+                        keys_list.append(str(key).split(".")[2])
+                    main_dict = make_dict(id_from_list)
+                    for key in keys_list:
+                        if key not in main_dict.keys():
+                            tmp = {key: "null"}
+                            main_dict.update(tmp)
+                    model = JobModel(by=main_dict["by"], post_id=id_from_list, score=main_dict["score"],
+                                     time=main_dict["time"], title=main_dict["title"], type=main_dict["type"],
+                                     url=main_dict["url"])
+                    model.save()
                 else:
                     print("Вже є")
 
         if form["category"].value() == "newstories":
-            id_list = requests.get(f"https://hacker-news.firebaseio.com/v0/"
-                                   f"newstories.json?print=pretty").json()
-            quantity = 0
             for id_from_list in id_list:
-                quantity += 1
                 base_object = NewsModel.objects.all().filter(post_id=id_from_list)
                 if len(base_object) == 0:
-                    main_dict = make_newstories_dict(id_from_list)
-                    try:
-                        model = NewsModel(by=main_dict["by"], descendants=main_dict["descendants"], post_id=id_from_list,
-                                          kids=main_dict["kids"], score=main_dict["score"], time=main_dict["time"],
-                                          title=main_dict["title"], type=main_dict["type"], url=main_dict["url"])
-                        model.save()
-                    except KeyError:
-                        pass
+                    keys_list = []
+                    for key in NewsModel._meta.get_fields():
+                        keys_list.append(str(key).split(".")[2])
+                    main_dict = make_dict(id_from_list)
+                    for key in keys_list:
+                        if key not in main_dict.keys():
+                            tmp = {key: "null"}
+                            main_dict.update(tmp)
+                    model = NewsModel(by=main_dict["by"], descendants=main_dict["descendants"], post_id=id_from_list,
+                                      kids=main_dict["kids"], score=main_dict["score"], time=main_dict["time"],
+                                      title=main_dict["title"], type=main_dict["type"], url=main_dict["url"])
+                    model.save()
                 else:
                     print("Вже є")
 
