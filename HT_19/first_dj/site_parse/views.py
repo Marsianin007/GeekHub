@@ -28,7 +28,7 @@ def do_parse(request):
                 if len(base_object) == 0:
                     keys_list = []
                     for key in AskModel._meta.get_fields():
-                        keys_list.append(str(key).split(".")[2])
+                        keys_list.append(key.name)
                     main_dict = make_dict(id_from_list)
                     for key in keys_list:
                         if key not in main_dict.keys():
@@ -48,7 +48,7 @@ def do_parse(request):
                 if len(base_object) == 0:
                     keys_list = []
                     for key in ShowModel._meta.get_fields():
-                        keys_list.append(str(key).split(".")[2])
+                        keys_list.append(key.name)
                     main_dict = make_dict(id_from_list)
                     for key in keys_list:
                         if key not in main_dict.keys():
@@ -69,7 +69,7 @@ def do_parse(request):
                 if len(base_object) == 0:
                     keys_list = []
                     for key in JobModel._meta.get_fields():
-                        keys_list.append(str(key).split(".")[2])
+                        keys_list.append(key.name)
                     main_dict = make_dict(id_from_list)
                     for key in keys_list:
                         if key not in main_dict.keys():
@@ -88,7 +88,7 @@ def do_parse(request):
                 if len(base_object) == 0:
                     keys_list = []
                     for key in NewsModel._meta.get_fields():
-                        keys_list.append(str(key).split(".")[2])
+                        keys_list.append(key.name)
                     main_dict = make_dict(id_from_list)
                     for key in keys_list:
                         if key not in main_dict.keys():
